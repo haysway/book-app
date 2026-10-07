@@ -9,20 +9,34 @@ function App() {
   const [error, setError] = useState(null);
 
   async function fetchBooksHandler() {
-    const response = await fetch("https://openlibrary.org/search.json?q=fiction&limit=10");
-    const data = await response.json();
-    
-    const transformedData = data.docs.map((bookData) => {
-      return {
-        id: bookData.key,
-        title: bookData.author,
-        author: bookData.author_name,
-        publishYear: bookData.first_publish_year
-      };
-    });
+    setIsLoading(true);
+    setError(null);
 
-    setBooks(transformedData);
+    try {
+      const response = await fetch("https://openlibrary.org/search.json?q=fiction&limit=10");
+      
+      if (!response.ok) {
+        throw new Error(`Error! Status: ${response.status}`);
+      }
 
+      const data = await response.json();
+
+      const transformedData = data.docs.map((bookData) => {
+        return {
+          id: bookData.key,
+          title: bookData.author,
+          author: bookData.author_name,
+          publishYear: bookData.first_publish_year
+        };
+      });
+
+      setBooks(transformedData);
+    } 
+    catch(e) {
+      setError(e.message);
+    }
+
+    setIsLoading(false);
   }
 
   // TODO: Complete addBookHandler
