@@ -8,8 +8,22 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // TODO: Complete fetchBooksHandler
-  function fetchBooksHandler() {}
+  async function fetchBooksHandler() {
+    const response = await fetch("https://openlibrary.org/search.json?q=fiction&limit=10");
+    const data = await response.json();
+    
+    const transformedData = data.docs.map((bookData) => {
+      return {
+        id: bookData.key,
+        title: bookData.author,
+        author: bookData.author_name,
+        publishYear: bookData.first_publish_year
+      };
+    });
+
+    setBooks(transformedData);
+
+  }
 
   // TODO: Complete addBookHandler
   function addBookHandler() {}
